@@ -9,9 +9,6 @@ set -euo pipefail
 trap 'echo "[bootstrap] error line $LINENO" >&2' ERR
 export AWS_PAGER=""; export DEBIAN_FRONTEND=noninteractive
 
-phase="${1:-}"; shift || true
-log(){ printf '[bootstrap] %s\n' "$*"; }
-
 # Set DOTFILES_ROOT to the location of your dotfiles repo in the Codespace
 # NOTE if there was an error cloning the dotfiles repo, check logs here:
 # /workspaces/.codespaces/.persistedshare/EnvironmentLog.txt
@@ -113,20 +110,9 @@ on_create(){
   setup_aws
 #   setup_aws_helpers
   # symlink in select files from dotfiles repo into the Codespaces home dir
+  setup_aliases
   link .gitconfig
   link .vimrc
 }
 
-on_start(){
-  log "[bootstrap] start phase"
-  setup_aws
-#   setup_aws_helpers
-#   check_aws_sso
-  setup_aliases
-}
-
-case "${phase}" in
-  --phase=create) on_create ;;
-  --phase=start)  on_start ;;
-  *) echo "usage: $0 --phase=create|--phase=start"; exit 2 ;;
-esac
+on_create
