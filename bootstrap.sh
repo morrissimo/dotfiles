@@ -1,4 +1,4 @@
-# #!/usr/bin/env bash
+#!/usr/bin/env bash
 
 # This file is specifically written for usage with Github Codespaces
 # see more details here:
@@ -13,6 +13,8 @@ export AWS_PAGER=""; export DEBIAN_FRONTEND=noninteractive
 # NOTE if there was an error cloning the dotfiles repo, check logs here:
 # /workspaces/.codespaces/.persistedshare/EnvironmentLog.txt
 DOTFILES_ROOT="${DOTFILES_ROOT:-/workspaces/.codespaces/.persistedshare/dotfiles}"
+
+log(){ printf '[bootstrap] %s\n' "$*"; }
 
 setup_aws(){
   mkdir -p "${HOME}/.aws"
@@ -96,10 +98,11 @@ setup_aliases(){
   grep -Fqx "$line" "$rc" 2>/dev/null || echo "$line" >> "$rc"
 }
 
-link() {
+link_dotfile() {
   # symlink a file from your dotfiles repo to the Codespaces home dir
   local src="$DOTFILES_ROOT/$1"
   local dst="$HOME/$1"
+  [[ -e "$src" ]] || { log "skip link $1 (missing $src)"; return 0; }
   [ -e "$src" ] || return 0
   mkdir -p "$(dirname "$dst")"
   ln -sfn "$src" "$dst"
@@ -108,11 +111,12 @@ link() {
 on_create(){
   log "[bootstrap] create phase"
   setup_aws
+  setup_aliases
 #   setup_aws_helpers
   # symlink in select files from dotfiles repo into the Codespaces home dir
-  setup_aliases
-  link .gitconfig
-  link .vimrc
+  link_dotfile .gitconfig
+  link_dotfile .vimrc
 }
 
-on_create
+on_create || true
+exit 0
