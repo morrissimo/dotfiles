@@ -1,42 +1,61 @@
 # This is Git's per-user configuration file.
 # It lives at ~/.gitconfig
 [user]
-        name = <your name>
-        email = <your email>
+        name = Robert Morris
+        email = robert@emthree.com
 [alias]
         pep8 = !git status -s | egrep -v '^[[:space:]]*?[D]' | awk '{print $2}' | grep '.py' | xargs pep8 -r --ignore=E501,E128
         pyflakes = !git status -s | egrep -v '^[[:space:]]*?[D]' | awk '{print $2}' | grep '.py' | xargs pyflakes
         #flake8 = !git status -s | egrep -v '^[[:space:]]+?[D]' | awk '{print $2}' | grep '.py' | xargs flake8 --ignore=E501,E128
         #lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
-        # this second lg form came from: http://blog.izs.me/page/3 (01/2013)
+        # ## this second lg form came from: http://blog.izs.me/page/3 (01/2013)
         lg = log --graph --pretty=format:'%Cred%h%Creset %C(yellow)%an%d%Creset %s %Cgreen(%cr)%Creset' --date=relative
-        ; from http://www.jukie.net/bart/blog/pimping-out-git-log, with author displayed
-        lgb = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --branches
-        lga = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative  --all
-        lgba = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --branches --all
+        # ## from http://www.jukie.net/bart/blog/pimping-out-git-log, with author displayed
+        #lgb = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --branches
+        #lga = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative  --all
+        #lgba = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --branches --all
+        lga = log --decorate --oneline --graph --all
         ds = diff --staged
         d = diff
         s = status
         a = add
         ap = add -p
         grepout = "!git checkout $(git branch | grep -i '$1')"
+        grepbranch = "!git branch -a | tr -d * | grep $1"
         # aliases from http://durdn.com/blog/2012/11/22/must-have-git-aliases-advanced-examples/
         # List commits showing changed files
         ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numstat
         mvim = !vim -p `git status --porcelain | awk {'print $2'}`
         undo-commit = reset --soft HEAD^
         diff-branch = "!git diff $(git rev-parse --abbrev-ref HEAD) --not $1"
-        clean-finished-branches = "!git branch -vv | grep 'origin/.*: gone]' | awk '{print $1}' | xargs git branch -D"
+        list-finished-branches = "!git fetch -p && git branch --list -vv --sort='committerdate' | grep 'origin/.*: gone]' | awk '{print $1}'"
+        list-finished-branches-details = "!git fetch -p && git branch --list -vv --sort='committerdate' | grep 'origin/.*: gone]'"
+        clean-finished-branches = "!git fetch -p && git branch -vv | grep 'origin/.*: gone]' | awk '{print $1}' | xargs git branch -d"
+        clean-finished-branches-force = "!git fetch -p && git branch -vv | grep 'origin/.*: gone]' | awk '{print $1}' | xargs git branch -D"
+        branches-last-updated = "for-each-ref --sort='-authordate:iso8601' --format=' %(committerdate:relative)%09%(refname:short)%09%(committername)' refs/heads"
 [color]
     diff = auto
 [init]
-    templatedir = ~/.git_template
+    #templatedir = ~/.git_template
 [push]
+    # https://git-scm.com/docs/git-config#Documentation/git-config.txt-pushdefault
     default = current
+    #default = upstream
+    # github notably does NOT support signed pushes (only commits & tags)
+    gpgSign = false
+[pull]
+    ff = only
+[commit]
+    # ## enable for gpg signing support
+    # gpsign = true
+    # gpgSign = true
+[gpg]
+    # ## enable for gpg signing support
+    # program = gpg
+[credential]
+    # helper = osxkeychain
+[tag]
+    # ## enable for gpg signing support
+    # gpgSign = true
 [core]
     excludesfile = ~/.gitignore
-[flake8]
-    # check all tracked files (instead of only staged files)
-    lazy = true
-    # prevent commits if yer shit is fugly
-    #strict = true
