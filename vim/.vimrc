@@ -1,34 +1,20 @@
-" python-optimized Vim config per https://realpython.com/blog/python/vim-and-python-a-match-made-in-heaven/
+set t_Co=256
+
+" probably only works consistently with iTerm2
+set term=xterm-256color
 
 set nocompatible
-filetype off
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+filetype plugin indent on
 
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
-
-" let Vundle manage Vundle, required
-Plugin 'gmarik/Vundle.vim'
-
-" Add all your plugins here (note older versions of Vundle used Bundle instead of Plugin)
-Plugin 'vim-scripts/indentpython.vim'
-"Plugin 'scrooloose/syntastic'
-"Plugin 'nvie/vim-flake8'
-" colorscheme plugins
-Plugin 'jnurmine/Zenburn'
-"Plugin 'altercation/vim-colors-solarized'
-
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-
-filetype plugin indent on    " required
-
+" disable swap files - live dangerously
 set noswapfile
-" turn on line numbering
-set nu
+
+" show line numbers
+set number
+
+" enable syntax highlighting
+syntax enable
 
 set backspace=indent,eol,start
 
@@ -36,7 +22,34 @@ set backspace=indent,eol,start
 set wildmode=longest,list,full
 set wildmenu
 
-"------------Start Python PEP 8 stuff----------------
+" set tabs to have 4 spaces
+set tabstop=4
+
+" expand tabs into spaces
+set expandtab
+
+" when using the >> or << commands, shift lines by 4 spaces
+set shiftwidth=4
+
+" show a visual line under the cursor's current line
+"set cursorline
+
+" show the matching part of the pair for [] {} and ()
+set showmatch
+
+" indent when moving to the next line while writing code
+set autoindent
+
+" just better in general
+set background=dark
+
+" the default comment color makes puppies cry
+hi Comment ctermfg=DarkGreen
+hi String ctermfg=DarkRed
+
+
+""" python stuff
+
 "" Number of spaces that a pre-existing tab is equal to.
 au BufRead,BufNewFile *py,*pyw,*.c,*.h set tabstop=4
 
@@ -47,7 +60,6 @@ au BufRead,BufNewFile *.py set softtabstop=4
 
 " Use the below highlight group when displaying bad whitespace is desired.
 highlight BadWhitespace ctermbg=red guibg=red
-
 " Display tabs at the beginning of a line in Python mode as bad.
 au BufRead,BufNewFile *.py,*.pyw match BadWhitespace /^\t\+/
 " Make trailing whitespace be flagged as bad.
@@ -64,27 +76,14 @@ set encoding=utf-8
 
 " For full syntax highlighting:
 let python_highlight_all=1
-syntax on
 
 " Keep indentation level from previous line:
 autocmd FileType python set autoindent
-"----------Stop python PEP 8 stuff--------------
 
-" better tab behavior for js/html/css
-au BufNewFile,BufRead *.js, *.html, *.css set tabstop=2 softtabstop=2 shiftwidth=2 expandtab
-
-" switch colorscheme based on gui or nogui
-"set background=dark
-let g:zenburn_high_Contrast=1
-let g:zenburn_transparent = 1
-let g:zenburn_force_dark_Background = 1
-colorscheme zenburn
-
-" syntastic plugin config
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
+" folding stuff
+"   toggle current fold: za
+"   un/fold all: zR/zM
+"set foldmethod=indent
+"set foldnestmax=2
+"hi Folded ctermbg=black
+"hi Folded ctermfg=darkgrey
