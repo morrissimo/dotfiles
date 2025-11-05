@@ -59,3 +59,6 @@
     # gpgSign = true
 [core]
     excludesfile = ~/.gitignore
+
+[includeIf "hasconfig:remote.origin.url:git@github.com:GroupSense/"]
+  path = ~/.gitconfig.groupsense
