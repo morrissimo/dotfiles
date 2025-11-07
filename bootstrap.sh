@@ -6,7 +6,7 @@
 
 
 set -euo pipefail
-trap 'echo "[bootstrap] error line $LINENO" >&2' ERR
+trap 'echo "[dotfiles-bootstrap] error line $LINENO" >&2' ERR
 export AWS_PAGER=""; export DEBIAN_FRONTEND=noninteractive
 
 # Set DOTFILES_ROOT to the location of your dotfiles repo in the Codespace
@@ -14,9 +14,10 @@ export AWS_PAGER=""; export DEBIAN_FRONTEND=noninteractive
 # /workspaces/.codespaces/.persistedshare/EnvironmentLog.txt
 DOTFILES_ROOT="${DOTFILES_ROOT:-/workspaces/.codespaces/.persistedshare/dotfiles}"
 
-log(){ printf '[bootstrap] %s\n' "$*"; }
+log(){ printf '[dotfiles-bootstrap] %s\n' "$*"; }
 
 setup_aws(){
+  log "setting up AWS CLI bits"
   mkdir -p "${HOME}/.aws"
   cfg="${HOME}/.aws/config"
   [[ -f "$cfg" ]] || : > "$cfg"
@@ -91,6 +92,7 @@ CFG
 # }
 
 setup_aliases(){
+  log "setting up aliases"
   local rc
   if [[ -n "${ZSH_VERSION:-}" ]]; then rc="$HOME/.zshrc"; else rc="$HOME/.bashrc"; fi
 
@@ -105,14 +107,14 @@ link_dotfile() {
   [[ -e "$src" ]] || { log "skip link $1 (missing $src)"; return 0; }
   [ -e "$src" ] || return 0
   mkdir -p "$(dirname "$dst")"
-  ln -sfn "$src" "$dst"
+  ln -sfn "$src" "$dst" && log "successfully symlinked $src -> $dst"
 }
 
 on_create(){
-  log "[bootstrap] create phase"
+  log "[dotfiles-bootstrap] create phase"
   setup_aws
   setup_aliases
-#   setup_aws_helpers
+  #setup_aws_helpers
   # symlink in select files from dotfiles repo into the Codespaces home dir
   link_dotfile .gitconfig
   link_dotfile .vimrc
